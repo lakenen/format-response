@@ -20,7 +20,13 @@ function formatHeaders(headers, ignored) {
   })
   var str = Object.keys(headers).map(function (h) {
     if (ignored.indexOf(h) > -1) return false
-    return h + ': ' + headers[h]
+    return uppercaseWords(h) + ': ' + headers[h]
   }).filter(Boolean).join('\n')
   return str
+}
+
+function uppercaseWords(str) {
+  return str.replace(/(^|\W)(\w)/g, function (m) {
+    return m.toUpperCase()
+  })
 }
