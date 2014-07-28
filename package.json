@@ -25,5 +25,12 @@
     "url": "https://github.com/lakenen/format-response/issues"
   },
   "homepage": "https://github.com/lakenen/format-response",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": [
+    "curl",
+    "format",
+    "http",
+    "request",
+    "response"
+  ]
 }
