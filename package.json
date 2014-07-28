@@ -1,7 +1,7 @@
 {
   "name": "format-response",
   "version": "0.1.0",
-  "description": "Formats http(s) responses a la `cURL -i` as a transform stream.",
+  "description": "Formats http(s) responses a la `curl -i` as a transform stream.",
   "main": "index.js",
   "scripts": {
     "test": "tape test/*"
