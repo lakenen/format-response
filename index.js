@@ -1,13 +1,14 @@
-var through = require('through2')
+var stream = require('stream')
   , concat = require('concat-stream')
-  , duplexer = require('duplexer')
   , http = require('http')
+  , DuplexCombination = require('duplex-combination');
 
 module.exports = function (opt) {
   opt = opt  || {}
-  var input = through()
-    , output = through()
-    , dup = duplexer(input, output)
+
+  var input = new stream.PassThrough()
+    , output = new stream.PassThrough()
+    , dup = new DuplexCombination(output,input)
 
   dup.on('pipe', function (res) {
     var statusText = res.statusCode + ' ' + http.STATUS_CODES[res.statusCode]
@@ -20,7 +21,7 @@ module.exports = function (opt) {
         output.end(header + json)
       }))
     } else {
-      dup.write(header)
+      output.write(header)
       input.pipe(output)
     }
   })

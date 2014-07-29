@@ -9,8 +9,7 @@
   "author": "Cameron Lakenen <cameron@lakenen.com>",
   "dependencies": {
     "concat-stream": "^1.4.6",
-    "duplexer": "^0.1.1",
-    "through2": "^0.5.1"
+    "duplex-combination": "^1.1.1"
   },
   "devDependencies": {
     "concat-stream": "^1.4.6",
