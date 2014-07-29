@@ -1,6 +1,6 @@
 # format-response
 
-Formats http(s) responses a la `curl -i` as a transform stream.
+Formats http(s) responses a la `curl -i` as a duplex stream.
 
 
 ## Installation

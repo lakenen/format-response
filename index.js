@@ -1,17 +1,31 @@
 var through = require('through2')
+  , concat = require('concat-stream')
+  , duplexer = require('duplexer')
   , http = require('http')
 
 module.exports = function (opt) {
   opt = opt  || {}
-  var stream = through()
+  var input = through()
+    , output = through()
+    , dup = duplexer(input, output)
 
-  stream.on('pipe', function (res) {
-    stream.push('HTTP/1.1 ' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '\n')
-    stream.push(formatHeaders(res.headers, opt.ignoreHeaders))
-    stream.push('\n\n')
+  dup.on('pipe', function (res) {
+    var statusText = res.statusCode + ' ' + http.STATUS_CODES[res.statusCode]
+    var header = 'HTTP/1.1 ' + statusText + '\n'
+    header += formatHeaders(res.headers, opt.ignoreHeaders) + '\n\n'
+
+    if (opt.prettifyJSON && res.headers['content-type'] === 'application/json') {
+      input.pipe(concat(function (json) {
+        json = JSON.stringify(JSON.parse(json), true, 2)
+        output.end(header + json)
+      }))
+    } else {
+      dup.write(header)
+      input.pipe(output)
+    }
   })
 
-  return stream
+  return dup
 }
 
 function formatHeaders(headers, ignored) {
