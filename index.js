@@ -11,8 +11,14 @@ module.exports = function (opt) {
     , dup = new DuplexCombination(output,input)
 
   dup.on('pipe', function (res) {
-    var statusText = res.statusCode + ' ' + http.STATUS_CODES[res.statusCode]
-    var header = 'HTTP/1.1 ' + statusText + '\n'
+    var statusText, header = ''
+
+    if (opt.printRequestHeader) {
+      header += res.req._header
+    }
+
+    statusText = res.statusCode + ' ' + http.STATUS_CODES[res.statusCode]
+    header += 'HTTP/1.1 ' + statusText + '\n'
     header += formatHeaders(res.headers, opt.ignoreHeaders) + '\n\n'
 
     if (opt.prettifyJSON && res.headers['content-type'] === 'application/json') {

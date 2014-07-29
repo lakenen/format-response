@@ -26,7 +26,15 @@ http.get('http://example.com', function (res) {
 
 ### ignoreHeaders
 
-`Array` - list of header names to ignore (case-insensitive)
+`Array` - list of header names to ignore (case-insensitive). Default: `[]`
+
+### prettifyJSON
+
+`boolean` - if the response type is `'application/json'`, prettify the JSON output. Default: `false`
+
+### printRequestHeader
+
+`boolean` - print the request header before the response. Default: `false`
 
 
 ## Running Tests

@@ -79,7 +79,7 @@ test('should ignore headers properly', function (t) {
   })
 })
 
-test('should prettify body', function (t) {
+test('should prettify body when prettifyJSON is true', function (t) {
   t.plan(1)
   var server = http.createServer(function (req, res) {
     res.setHeader('content-type', 'application/json')
@@ -95,6 +95,22 @@ test('should prettify body', function (t) {
       res.pipe(format({ prettifyJSON: true })).pipe(concat(function (str) {
         str = str.toString().toLowerCase()
         t.ok(str.indexOf('{\n  "beep": "boop",\n  "bop": {\n    "hello": "world"\n  }\n}') > -1, 'printed body')
+        server.close()
+      }))
+    })
+  })
+})
+
+test('should print request headers when printRequestHeaders is true', function (t) {
+  t.plan(1)
+  var server = http.createServer(function (req, res) {
+    res.end()
+  }).listen(0, function () {
+    var port = server.address().port
+    http.get('http://localhost:' + port, function (res) {
+      res.pipe(format({ printRequestHeader: true })).pipe(concat(function (str) {
+        str = str.toString().toLowerCase()
+        t.ok(true, 'printed request headers')
         server.close()
       }))
     })
