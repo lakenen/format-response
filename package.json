@@ -1,6 +1,6 @@
 {
   "name": "format-response",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Formats http(s) responses a la `curl -i` as a duplex stream.",
   "main": "index.js",
   "scripts": {
