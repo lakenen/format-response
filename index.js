@@ -10,16 +10,18 @@ module.exports = function (opt) {
     , output = new stream.PassThrough()
     , dup = new DuplexCombination(output,input)
 
+  opt.ignoreHeaders = (opt.ignoreHeaders || []).map(function (s) {
+    return s.toLowerCase()
+  })
+
   dup.on('pipe', function (res) {
     var statusText, header = ''
 
-    if (opt.printRequestHeader) {
-      header += res.req._header
+    if (opt.printRequestHeader && res.req) {
+      header += formatRequestHeader(res.req, opt.ignoreHeaders)
     }
 
-    statusText = res.statusCode + ' ' + http.STATUS_CODES[res.statusCode]
-    header += 'HTTP/1.1 ' + statusText + '\n'
-    header += formatHeaders(res.headers, opt.ignoreHeaders) + '\n\n'
+    header += formatResponseHeader(res, opt.ignoreHeaders)
 
     if (opt.prettifyJSON && res.headers['content-type'] === 'application/json') {
       input.pipe(concat(function (json) {
@@ -35,15 +37,34 @@ module.exports = function (opt) {
   return dup
 }
 
-function formatHeaders(headers, ignored) {
-  ignored = (ignored || []).map(function (s) {
-    return s.toLowerCase()
-  })
-  var str = Object.keys(headers).map(function (h) {
+function formatHeaderObject(headers, ignored) {
+  return Object.keys(headers).map(function (h) {
     if (ignored.indexOf(h) > -1) return false
     return uppercaseWords(h) + ': ' + headers[h]
   }).filter(Boolean).join('\n')
-  return str
+}
+
+function formatRequestHeader(req, ignored) {
+  var header = ''
+  if (req._header) {
+    header += req._header.split('\n').filter(function (line) {
+      var headerName = line.toLowerCase().split(':')[0]
+      return ignored.indexOf(headerName) < 0
+    }).join('\n')
+  } else {
+    header += req.method + ' ' + req.path + ' HTTP/1.1\n'
+    header += formatHeaderObject(req._headers, ignored) + '\n\n'
+  }
+  return header
+}
+
+function formatResponseHeader(res, ignored) {
+  var statusText = res.statusCode + ' ' + http.STATUS_CODES[res.statusCode]
+    , header = 'HTTP/1.1 ' + statusText + '\n'
+
+  header += formatHeaderObject(res.headers, ignored)
+
+  return header + '\n\n'
 }
 
 function uppercaseWords(str) {
