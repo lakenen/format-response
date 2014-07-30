@@ -116,3 +116,20 @@ test('should print request headers when printRequestHeaders is true', function (
     })
   })
 })
+
+test('should not print body when ignoreBody is true', function (t) {
+  var body = 'beep boop bop'
+  t.plan(1)
+  var server = http.createServer(function (req, res) {
+    res.end(body)
+  }).listen(0, function () {
+    var port = server.address().port
+    http.get('http://localhost:' + port, function (res) {
+      res.pipe(format({ ignoreBody: true })).pipe(concat(function (str) {
+        str = str.toString().toLowerCase()
+        t.equal(str.indexOf(body), -1, 'ignored body')
+        server.close()
+      }))
+    })
+  })
+})

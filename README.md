@@ -36,6 +36,10 @@ http.get('http://example.com', function (res) {
 
 `boolean` - print the request header before the response. Default: `false`
 
+### ignoreBody
+
+`boolean` - don't print the response body. Default: `false`
+
 
 ## Running Tests
 

@@ -23,6 +23,10 @@ module.exports = function (opt) {
 
     header += formatResponseHeader(res, opt.ignoreHeaders)
 
+    if (opt.ignoreBody) {
+      return output.end(header)
+    }
+
     if (opt.prettifyJSON && res.headers['content-type'] === 'application/json') {
       input.pipe(concat(function (json) {
         json = JSON.stringify(JSON.parse(json), true, 2)
