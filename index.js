@@ -35,6 +35,11 @@ module.exports = function (opt) {
     } else {
       output.write(header)
       input.pipe(output)
+      res.on('end', function () {
+        // force the output to end when response ends
+        // not sure why, but this is necessary sometimes :(
+        output.end()
+      })
     }
   })
 
