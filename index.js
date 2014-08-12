@@ -47,7 +47,8 @@ module.exports = function (opt) {
 }
 
 function formatHeaderObject(headers, ignored) {
-  return Object.keys(headers).map(function (h) {
+  ignored = ignored || []
+  return Object.keys(headers || {}).map(function (h) {
     if (ignored.indexOf(h) > -1) return false
     return uppercaseWords(h) + ': ' + headers[h]
   }).filter(Boolean).join('\n')
